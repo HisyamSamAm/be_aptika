@@ -263,6 +263,31 @@ Standar formulir FR014-SMKI untuk pencatatan resmi pemusnahan media penyimpanan,
 
 ---
 
+## 10. SMKI - Pelaporan Insiden Keamanan Informasi (FR-016)
+**[Membutuhkan Bearer Token]**
+
+Prefix: `/api/smki/pelaporan-insiden`
+
+Hak akses: user biasa hanya melihat/mengubah **laporannya sendiri** (`user_id`); **hapus khusus admin** (403 untuk non-admin); `status_laporan` yang dikirim non-admin **diabaikan**. Buat (`POST`) dan ubah (`PUT` via `POST + _method=PUT` bila ada file) memakai `multipart/form-data` karena ada upload bukti (`bukti_pelapor`, `bukti_pemilik`: `png,jpg,jpeg,pdf,docx`, maks 5MB).
+
+### Endpoints
+- `GET /api/smki/pelaporan-insiden` : Daftar laporan (milik sendiri, kecuali admin) + paginasi + KPI.
+  - Query parameters:
+    - `search`: string (nama pelapor / sistem / kategori / instansi)
+    - `kategori`: string (salah satu dari 9 kategori)
+    - `status`: string (`Menunggu Pemilik Sistem`, `Dalam Penanganan`, `Selesai`)
+    - `page`, `per_page` (`-1` = semua)
+- `GET /api/smki/pelaporan-insiden/lookup` : Master statis dropdown (kategori, jenis sistem, jenis layanan, status) + default kop dokumen (`F16-SMKI`, `1.0`, `14 Februari 2022`).
+- `POST /api/smki/pelaporan-insiden` : Buat laporan Bagian I (required: `kategori_insiden`, `jenis_layanan`, `tanggal_laporan`, `nama_pelapor`, `instansi_pelapor`, `email_pelapor`, `waktu_kejadian`, `nama_sistem`).
+- `GET /api/smki/pelaporan-insiden/{id}` : Detail satu laporan (pemilik atau admin, selain itu 404).
+- `PUT /api/smki/pelaporan-insiden/{id}` : Lengkapi Bagian II (required: `nama_instansi_pemilik`, `nama_pic`, `deskripsi_kejadian`). Flag `hapus_bukti_pelapor` / `hapus_bukti_pemilik` (`1`) untuk menghapus file lama.
+- `DELETE /api/smki/pelaporan-insiden/{id}` : **[Admin saja]** Hapus laporan (soft delete + hapus file bukti).
+- `GET /api/smki/pelaporan-insiden/{id}/unduh?tipe=pelapor|pemilik` : Unduh file bukti (attachment + nama asli, CORS-friendly).
+- `GET /api/smki/pelaporan-insiden/{id}/export-docx` : Dokumen Word FR-016 terisi (checkbox, kop, screenshot ter-embed di lampiran).
+  - Query parameters opsional: `no_dokumen`, `no_revisi`, `tanggal_berlaku`.
+
+---
+
 > [!NOTE]
 > Semua route yang tidak menggunakan `GET` (seperti `POST`, `PUT`, `DELETE`) harus mengirimkan data dalam format `application/json` (Gunakan Header `Content-Type: application/json` dan `Accept: application/json`).
 
