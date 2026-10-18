@@ -1549,6 +1549,30 @@ Route::middleware(['auth:sanctum', 'active'])->group(function () {
                     'update'  => 'smki.hak-akses-ti.update',
                     'destroy' => 'smki.hak-akses-ti.destroy',
                 ]);
+
+            // Formulir Program Tahunan Audit Internal (FR-008)
+            Route::get('laporan-audit-tahunan/lookup', [\App\Http\Controllers\LaporanAuditTahunanController::class, 'lookup'])
+                ->name('smki.laporan-audit-tahunan.lookup');
+            Route::get('laporan-audit-tahunan/export-docx', [\App\Http\Controllers\LaporanAuditTahunanController::class, 'exportDocx'])
+                ->name('smki.laporan-audit-tahunan.export-docx-all');
+            Route::get('laporan-audit-tahunan/{id}/export-docx', [\App\Http\Controllers\LaporanAuditTahunanController::class, 'exportDocx'])
+                ->name('smki.laporan-audit-tahunan.export-docx');
+            Route::post('laporan-audit-tahunan/store-all', [\App\Http\Controllers\LaporanAuditTahunanController::class, 'storeAll'])
+                ->name('smki.laporan-audit-tahunan.store-all');
+            Route::post('laporan-audit-tahunan/informasi', [\App\Http\Controllers\LaporanAuditTahunanController::class, 'storeInformasi'])
+                ->name('smki.laporan-audit-tahunan.informasi');
+            Route::post('laporan-audit-tahunan/{id}/tim-auditor', [\App\Http\Controllers\LaporanAuditTahunanController::class, 'storeTimAuditor'])
+                ->name('smki.laporan-audit-tahunan.tim-auditor');
+            Route::post('laporan-audit-tahunan/{id}/objek-audit', [\App\Http\Controllers\LaporanAuditTahunanController::class, 'storeObjekAudit'])
+                ->name('smki.laporan-audit-tahunan.objek-audit');
+            Route::apiResource('laporan-audit-tahunan', \App\Http\Controllers\LaporanAuditTahunanController::class)
+                ->names([
+                    'index'   => 'smki.laporan-audit-tahunan.index',
+                    'store'   => 'smki.laporan-audit-tahunan.store',
+                    'show'    => 'smki.laporan-audit-tahunan.show',
+                    'update'  => 'smki.laporan-audit-tahunan.update',
+                    'destroy' => 'smki.laporan-audit-tahunan.destroy',
+                ]);
         });
 
     // ========================================================
@@ -1560,6 +1584,23 @@ Route::middleware(['auth:sanctum', 'active'])->group(function () {
     Route::get('daftar-aset-ti/export-excel', [\App\Http\Controllers\DaftarAsetTiController::class, 'exportExcel'])
         ->name('daftar-aset-ti.export-excel');
     Route::apiResource('daftar-aset-ti', \App\Http\Controllers\DaftarAsetTiController::class);
+
+    // ========================================================
+    // ALIAS STANDALONE: LAPORAN AUDIT TAHUNAN (FR-008)
+    // ========================================================
+    Route::middleware(['service.enabled:SMKI'])->group(function () {
+        Route::get('laporan-audit-tahunan/lookup', [\App\Http\Controllers\LaporanAuditTahunanController::class, 'lookup']);
+        Route::get('laporan-audit-tahunan/export-docx', [\App\Http\Controllers\LaporanAuditTahunanController::class, 'exportDocx']);
+        Route::get('laporan-audit-tahunan/{id}/export-docx', [\App\Http\Controllers\LaporanAuditTahunanController::class, 'exportDocx']);
+        Route::post('laporan-audit-tahunan/store-all', [\App\Http\Controllers\LaporanAuditTahunanController::class, 'storeAll']);
+        Route::post('laporan-audit-tahunan/informasi', [\App\Http\Controllers\LaporanAuditTahunanController::class, 'storeInformasi']);
+        Route::post('laporan-audit-tahunan/{id}/tim-auditor', [\App\Http\Controllers\LaporanAuditTahunanController::class, 'storeTimAuditor']);
+        Route::post('laporan-audit-tahunan/{id}/objek-audit', [\App\Http\Controllers\LaporanAuditTahunanController::class, 'storeObjekAudit']);
+        Route::apiResource('laporan-audit-tahunan', \App\Http\Controllers\LaporanAuditTahunanController::class);
+    });
 });
+
+
+
 
 
